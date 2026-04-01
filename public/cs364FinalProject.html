@@ -8,51 +8,25 @@
     <link rel="stylesheet" href="cs364FinalProject.css">
 </head>
 
-<body>
+<body id='body'>
     <h1>Terraria Calculator</h1>
 
-    <h2>Enter Player Character</h2>
-    <div id = inputPlayerDiv>
-        <label for="Health">Health</label>
-        <input type="number" id="Health" />
-        <label for="Mana">Mana</label>
-        <input type="number" id="Mana" />
-        <label for="Armour">Armour</label>
-        <input type="number" id="Armour" />
-    </div>
-
-    <h2>Enter Weapon Stats</h2>
-    <div id ="inputWeaponDiv">
-        <label for="WeaponName">Weapon Name</label>
-        <input type="text" id="WeaponName" />
-        <label for="WeaponDamage">Weapon Damage</label>
-        <input type="number" id="WeaponDamage" />
-        <label for="WeaponRange">Weapon Range (in tiles)</label>
-        <input type="number" id="WeaponRange" />
-    </div>
-
-    <h2>Enter Player Location</h2>
-    <div id = "inputLocationDiv">
-        <label for="Location">Location</label>
-        <input type="text" id="Location" />
-    </div>
-
-    <h2>Enter Enemy</h2>
-    <div id = "inputEnemyDiv">
-        <label for="EnemyName">Enemy Name</label>
-        <input type="text" id="EnemyName" />
-    </div>
-
-    <h1> What would you like to do</h1>
+    <h2> What would you like to do</h2>
     <div id="commandDiv">
-        <label for="SelectCommand">Computer</label>
-            <select name="SelectComputer" id="SelectCommand">
-                <option value="Find">Find</option>
-                <option value="Fight">Fight</option>
-                <option value="Test">Test</option>
-            </select>
+        <select name="SelectComputer" id="SelectCommand">
+            <option value="Find">Find</option>
+            <option value="Fight">Fight</option>
+            <option value="Test">Test</option>
+        </select>
     </div>
+
+    <br>
+    <div id="submitDiv">
+        <button type="submit" id="Submit">Submit Form</button>
+    </div>
+
 
 </body>
+<script src="cs364FinalProject.js"></script>
 
 </html>
