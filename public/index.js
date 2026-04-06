@@ -8,17 +8,18 @@ submit.addEventListener('click', function () {
     const selectedCommand = command.value;
     
     //change form based on value
-    if (selectedCommand === 'Fight') {
-        console.log('show fight');
-        showFight();
+    if (selectedCommand === 'Create') {
+        console.log('show Create');
+        showCreate();
     }
 });
 
 //make request to sever based on whats selected
 
-function showFight() {
+function showCreate() {
     document.getElementById('app').innerHTML =
         `
+    <h1>Create Player</h1>
     <h2>Enter Player Character</h2>
     <div id=inputPlayerDiv>
         <label for="Health">Health</label>
@@ -51,8 +52,8 @@ function showFight() {
     `
 
     //get submit and send req when clicked
-    let submitFight = document.getElementById('Submit');
-    submitFight.addEventListener('click', async function () {
+    let submitCreate = document.getElementById('Submit');
+    submitCreate.addEventListener('click', async function () {
         //get values from form elements
         const health = document.getElementById('Health').value;
         const armour = document.getElementById('Armour').value;
@@ -64,7 +65,7 @@ function showFight() {
 
         //send request to game endpoint
         try {
-            const response = await fetch('/fight/', {
+            const response = await fetch('/create/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

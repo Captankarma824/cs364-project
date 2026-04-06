@@ -11,10 +11,14 @@ const PORT = process.env.PORT || 8000;
 var app = express();
 
 const server = app.listen(PORT, () => {
-    // Log the current path
-    console.log(`Working Directory: ${process.cwd()}`);
-    // Log the port
-    console.log(`Server started on port: ${server.address().port}`);
+  //log the current path
+  console.log(`Working Directory: ${process.cwd()}`);
+  //log the current running family
+  console.log(`Server running on: ${server.address().family}`);
+  //log the current running ip
+  console.log(`Server running on ip: ${server.address().address}`);
+  //log the port
+  console.log(`Server running on port: ${server.address().port}`);
 });
 
 //sql connecttion
@@ -40,15 +44,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //routes
-app.use('/fight',require('./routes/FightRouter.js'));
+app.use('/find', require('./routes/FindRouter.js'));
+app.use('/create', require('./routes/PlayerRouter.js'));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
