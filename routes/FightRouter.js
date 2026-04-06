@@ -3,7 +3,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 
 //router to post to sql Server
-router.post('/', function (req, res, next) {
+router.post('/', async (req, res) =>{
     classId = uuidv4();
     playerId = uuidv4();
 
@@ -26,12 +26,14 @@ router.post('/', function (req, res, next) {
         }
     );
 
+    //query to get 
+
     res.status(200).json('success add');
 
 });
 
 //router to get from sql Server
-router.get('/', function (req, res, next) {
+router.get('/', async (req, res) =>{
     connection.query(
         'SELECT * FROM users WHERE id = ?',
         [1], // Use parameters to prevent SQL injection
@@ -41,3 +43,5 @@ router.get('/', function (req, res, next) {
         }
     );
 });
+
+module.exports = router;

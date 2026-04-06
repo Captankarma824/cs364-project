@@ -5,6 +5,18 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mysql = require('mysql2');
 
+//port 8000
+const PORT = process.env.PORT || 8000;
+
+var app = express();
+
+const server = app.listen(PORT, () => {
+    // Log the current path
+    console.log(`Working Directory: ${process.cwd()}`);
+    // Log the port
+    console.log(`Server started on port: ${server.address().port}`);
+});
+
 //sql connecttion
 const connection = mysql.createConnection({
   host: '138.49.184.123',
@@ -20,8 +32,6 @@ connection.connect((err) => {
   console.log('Connected to the SQL database!');
 });
 
-var app = express();
-
 //middleware
 app.use(logger('dev'));
 app.use(express.json());
@@ -30,7 +40,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //routes
-app.use('/',sqlRouter);
+app.use('/fight',require('./routes/FightRouter.js'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
