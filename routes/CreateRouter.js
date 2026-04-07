@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
+const connection = require('../db');
 
 //router to post to sql Server
 router.post('/', async (req, res) =>{
