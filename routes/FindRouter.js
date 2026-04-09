@@ -18,11 +18,28 @@ router.get('/enemy', async (req, res) => {
     );
 });
 
+//router to get location from sql server
 router.get('/location', async (req, res) => {
     const location = req.query;
 
     connection.query(
         'SELECT * FROM Location WHERE Background = ?', [location.LocationName],
+        (err, results) => {
+            if (err) {
+                throw err;
+            }
+            //on success
+            return res.status(200).json(results[0]);
+        }
+    );
+});
+
+//router to get location from sql server
+router.get('/player', async (req, res) => {
+    const Player = req.query;
+
+    connection.query(
+        'SELECT * FROM Player WHERE PlayerId = ?', [Player.PlayerId],
         (err, results) => {
             if (err) {
                 throw err;

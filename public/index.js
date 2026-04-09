@@ -43,20 +43,26 @@ function showCreate() {
         <input type="number" id="WeaponRange" />
     </div>
 
-    <h2>Enter Enemy</h2>
-    <div id="inputEnemyDiv">
-        <label for="EnemyName">Enemy Name</label>
-        <input type="text" id="EnemyName" />
+    <div id ="outputDiv">
     </div>
-
     <div id="submitDiv">
-        <button type="submit" id = "Submit">Submit Form</button>
+        <button type="submit" id = "Submit">Create Character</button>
+    </div>
+    <div id = "backDiv">
+        <button type="submit" id = "Back">Go Back</button>
     </div>
     `
+
+    //go back to index form
+    const backButton = document.getElementById('Back');
+    backButton.addEventListener('click', function () {
+        showIndex();
+    });
 
     //get submit and send req when clicked
     let submitCreate = document.getElementById('Submit');
     submitCreate.addEventListener('click', async function () {
+        console.log('create character');
         //get values from form elements
         const health = document.getElementById('Health').value;
         const armour = document.getElementById('Armour').value;
@@ -64,30 +70,43 @@ function showCreate() {
         const weaponDamage = document.getElementById('WeaponDamage').value;
         const weaponName = document.getElementById('WeaponName').value;
         const weaponRange = document.getElementById('WeaponRange').value;
-        const EnemyName = document.getElementById('EnemyName').value;
+
+        //output div
+        const outputDiv = document.getElementById('outputDiv');
 
         //send request to game endpoint
         try {
-            const response = await fetch('/create/', {
+            //url for fetch
+            const url = new URL('/create/player', window.location.origin);
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: {
+                body: JSON.stringify({
                     'health': health,
                     'armour': armour,
                     'mana': mana,
                     'weaponDamage': weaponDamage,
                     'weaponRange': weaponRange,
                     'weaponName': weaponName,
-                    'enemyName': EnemyName,
-
-                }
+                })
             });
 
             if (!response.ok) {
-                throw new Error("Request failed with status: 200");
+                throw new Error("Request failed with status: 400");
             }
+            //else put what is returned into outputDiv
+            let output = await response.json();
+            console.log(output);
+
+            //show player Id to user
+            const pId = document.createElement('p');
+            pId.textContent = 'PlayerId is: ' + output.PlayerId;
+
+            //put on display
+            outputDiv.appendChild(pId);
 
         } catch (err) {
             console.log("bad request:", err);
@@ -112,17 +131,93 @@ function showFind() {
     <div id="submitDiv">
         <button type="submit" id = "Submit">Submit Form</button>
     </div>
+
+    <div id = "backDiv">
+        <button type="submit" id = "Back">Go Back</button>
+    </div>
     `
 
     //get submit and send req when clicked
-    const submitCreate = document.getElementById('Submit');
-    submitCreate.addEventListener('click', async function () {
+    const submitFind = document.getElementById('Submit');
+
+    //go back to index form
+    const backButton = document.getElementById('Back');
+    backButton.addEventListener('click', function () {
+        showIndex();
+    });
+
+    submitFind.addEventListener('click', async function () {
         const selectFind = document.getElementById('SelectFind').value;
 
         //change form based on what is selected
         if (selectFind === 'Player') {
             console.log('player');
-            app.innerHTML = ``;
+            app.innerHTML =
+                `
+            <h1>Find Player Character</h1>
+            <div id=inputPlayerDiv>
+            <label for="PlayerId">Player Id</label>
+            <input type="text" id="PlayerId" />
+              </div>
+              <div id="submitDiv">
+             <button type="submit" id = "Submit">Submit Form</button>
+             </div>
+             <div id = "outputDiv"> 
+             </div>
+
+             <button type="submit" id = "Back">Go Back</button>
+            `;
+
+            //get form elements
+            const playerIdInput = document.getElementById('PlayerId');
+            const outputDiv = document.getElementById('outputDiv');
+
+            //go back to select form
+            const backButton = document.getElementById('Back');
+            backButton.addEventListener('click', function () {
+                showFind();
+            });
+
+            //get submit and send req when clicked
+            const submitCreate = document.getElementById('Submit');
+            submitCreate.addEventListener('click', async function () {
+
+                //send playerId to server to find player
+                try {
+                    const params = { PlayerId: playerIdInput.value };
+                    const url = new URL('/find/player', window.location.origin);
+                    url.search = new URLSearchParams(params).toString();
+
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Request failed with status: 400");
+                    }
+
+                    //else put what is returned into outputDiv
+                    let output = await response.json();
+                    console.log(output);
+
+                    //display all the info in outputDiv
+                    const h = document.createElement('p');
+                    h.textContent = 'Player Health: ' + output.Health;
+                    const m = document.createElement('p');
+                    m.textContent = 'Player Mana: ' + output.Mana;
+
+                    //put into output div
+                    outputDiv.appendChild(h);
+                    outputDiv.appendChild(m);
+
+                } catch (err) {
+                    console.log("bad request:", err);
+                }
+            });
+
         } else if (selectFind === 'Enemy') {
             //display find enemy form
             console.log('Enemy');
@@ -132,16 +227,26 @@ function showFind() {
               <label for="EnemyName">Input Enemy Name</label>
              <input type="text" name="EnemyName" id = "EnemyName">
              <div id="submitDiv">
-        <button type="submit" id = "Submit">Submit Form</button>
-    </div>
+               <button type="submit" id = "Submit">Submit Form</button>
+            </div>
              <br>
              <div id ="outputDiv">
         
-            </div>`;
+            </div>
+
+            <button type="submit" id = "Back">Go Back</button>
+            `;
 
             //get form elements
             const EnemyNameInput = document.getElementById('EnemyName');
             const outputDiv = document.getElementById('outputDiv');
+
+            //go back to select form
+            const backButton = document.getElementById('Back');
+            backButton.addEventListener('click', function () {
+                showFind();
+            });
+
             //get submit and send req when clicked
             const submitCreate = document.getElementById('Submit');
             submitCreate.addEventListener('click', async function () {
@@ -149,7 +254,7 @@ function showFind() {
                 //send enemyname to server to find enemy
                 try {
                     const params = { EnemyName: EnemyNameInput.value };
-                    const url = new URL('http://localhost:8000/find/enemy');
+                    const url = new URL('/find/enemy', window.location.origin);
                     url.search = new URLSearchParams(params).toString();
 
                     const response = await fetch(url, {
@@ -207,18 +312,27 @@ function showFind() {
              <div id ="outputDiv">
         
             </div>
+
+            <button type="submit" id = "Back">Go Back</button>
             `;
 
             //get form elements
             const LocationName = document.getElementById('LocationName');
             const outputDiv = document.getElementById('outputDiv');
+
+            //go back to select form
+            const backButton = document.getElementById('Back');
+            backButton.addEventListener('click', function () {
+                showFind();
+            });
+
             //get submit and send req when clicked
             const submitCreate = document.getElementById('Submit');
             submitCreate.addEventListener('click', async function () {
                 //send enemyname to server to find enemy
                 try {
                     const params = { LocationName: LocationName.value };
-                    const url = new URL('http://localhost:8000/find/location');
+                    const url = new URL('/find/location', window.location.origin);
                     url.search = new URLSearchParams(params).toString();
 
                     const response = await fetch(url, {
@@ -239,7 +353,7 @@ function showFind() {
                     const biomeName = document.createElement('p');
                     biomeName.textContent = 'Biome: ' + output.Background;
                     const biomeId = document.createElement('p');
-                    biomeId.textContent = 'BiomeId: '+ output.BiomeId;
+                    biomeId.textContent = 'BiomeId: ' + output.BiomeId;
 
                     //put into div
                     outputDiv.appendChild(biomeName);
@@ -256,4 +370,42 @@ function showFind() {
 
     });
 
+}
+
+//function to show index
+function showIndex() {
+    document.getElementById('app').innerHTML =
+        `
+    <h1>Terraria Calculator</h1>
+
+        <h2> What would you like to do</h2>
+        <div id="commandDiv">
+            <select name="SelectComputer" id="SelectCommand">
+                <option value="Find">Find</option>
+                <option value="Create">Create</option>
+            </select>
+        </div>
+
+        <br>
+        <div id="submitDiv">
+            <button type="submit" id="SubmitCommand">Submit Form</button>
+        </div>
+    `
+
+    //show diff form based on what user wants to do
+    let submit = document.getElementById('SubmitCommand');
+    let command = document.getElementById('SelectCommand');
+
+    submit.addEventListener('click', function () {
+        const selectedCommand = command.value;
+
+        //change form based on value
+        if (selectedCommand === 'Create') {
+            console.log('show Create');
+            showCreate();
+        } else if (selectedCommand === 'Find') {
+            console.log('show Find');
+            showFind();
+        }
+    });
 }
