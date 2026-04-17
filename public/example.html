@@ -119,31 +119,25 @@ button:hover {
 <!-- Navbar -->
 <div class="navbar">
     <h1>Terraria DB</h1>
-    <div>
-        <a href="#">Players</a>
-        <a href="#">Classes</a>
-        <a href="#">Locations</a>
-        <a href="#">Enemies</a>
-        <a href="#">Queries</a>
-    </div>
+    
 </div>
 
 <div class="container">
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="#">Dashboard</a>
-        <a href="#">Add Player</a>
-        <a href="#">Add Enemy</a>
-        <a href="#">Add Location</a>
-        <a href="#">Run Queries</a>
+        <a href="#">Players</a>
+        <a href="#">Classes</a>
+        <a href="#">Locations</a>
+        <a href="#">Enemies</a>
+        <a href="#">Queries</a>
     </div>
 
     <!-- Main Content -->
     <div class="main">
 
         <!-- Players Table -->
-        <div class="card">
+        <div class="card" id = "playerDiv">
             <h2>Players</h2>
             <button>Add Player</button>
 
@@ -184,7 +178,7 @@ button:hover {
         </div>
 
         <!-- Enemies Section -->
-        <div class="card">
+        <div class="card" id = "enemiesDiv">
             <h2>Enemies</h2>
 
             <table>
@@ -218,7 +212,7 @@ button:hover {
         </div>
 
         <!-- Query Section -->
-        <div class="card">
+        <div class="card" id = "queriesDiv">
             <h2>Run Query</h2>
 
             <select>
