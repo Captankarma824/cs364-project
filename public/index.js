@@ -18,7 +18,7 @@ async function playerToggle() {
         playerDiv.innerHTML =
             `
                 <h2>Players</h2>
-                <button id ="addPlayer">Add Player</button> 
+                <button id ="addPlayer" onclick="addPlayer()">Add Player</button> 
                 <select id ="sortBy">
                     <option value ="PlayerName">Player Name</option>
                     <option value ="Health">Health</option>
@@ -48,6 +48,28 @@ async function playerToggle() {
         let page = document.getElementById('pageCount');
 
         getPlayers(parseInt(page.textContent));
+
+        sortBy.addEventListener('change', function () {
+            playerTable.innerHTML = `<tr>
+        <th>Name</th>
+        <th>Health</th>
+        <th>Mana</th>
+        <th>Class</th>
+    </tr>`;
+            page.textContent = '0';
+            getPlayers(0);
+        });
+
+        orderBy.addEventListener('change', function () {
+            playerTable.innerHTML = `<tr>
+        <th>Name</th>
+        <th>Health</th>
+        <th>Mana</th>
+        <th>Class</th>
+    </tr>`;
+            page.textContent = '0';
+            getPlayers(0);
+        });
 
         //pagination buttons
         let next = document.getElementById('next');
@@ -79,6 +101,82 @@ async function playerToggle() {
                 page.textContent = page.textContent = '' + (parseInt(page.textContent) - 1);
             }
         });
+
+        //add player
+        async function addPlayer() {
+            playerDiv.innerHTML =
+                `
+                <h2>Add Player</h2>
+
+                <label for="playerName">Player Name</label>
+                <input type="text" id="playerName" placeholder="Enter name…"><br>
+
+                <label for="mana">Mana</label>
+                <input type="number" id="mana" placeholder="e.g. 69" min="0"><br>
+
+                <label for="health">Health</label>
+                <input type="number" id="health" placeholder="e.g. 67" min="0"><br>
+
+                <label for="armour">Armour</label>
+                <input type="number" id="armour" placeholder="e.g. 41" min="0"><br>
+
+                <label for="weaponName">Weapon Name</label>
+                <input type="text" id="weaponName" placeholder="e.g. chungus"><br>
+
+                <label for="weaponDam">Weapon Damage</label>
+                <input type="number" id="weaponDam" placeholder="e.g. 21" min="0"><br>
+
+                <label for="weaponRange">Weapon Range</label>
+                <input type="number" id="weaponRange" placeholder="e.g. 1738" min="0"><br>
+
+                <select id ="className">
+                    <option value ="Range">Range</option>
+                    <option value ="Melee">Melee</option>
+                    <option value ="Mage">Mage</option>
+                    <option value ="Summoner">Summoner</option>
+                </select>
+
+                <button id="submitButton" onclick="submitPlayer()">Submit</button>
+                <button id="cancelButton" onclick="playerToggle(); playerToggle();">Cancel</button>
+                <p id="formMsg"></p>
+            `;
+
+            async function submitPlayer() {
+
+                const body = {
+                    Mana: parseInt(document.getElementById('mana').value) || 0,
+                    Health: parseInt(document.getElementById('health').value) || 0,
+                    PlayerName: document.getElementById('playerName').value.trim() || null,
+                    Armour: parseInt(document.getElementById('armour').value) || 0,
+                    WeaponDam: parseInt(document.getElementById('weaponDam').value) || 0,
+                    WeaponName: document.getElementById('weaponName').value.trim() || null,
+                    WeaponRange: parseInt(document.getElementById('weaponRange').value) || 0,
+                    ClassName: document.getElementById('className').value.trim() || null,
+                };
+
+                try {
+                    const url = new URL(`http://${window.location.hostname}:7000/create/player`);
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body),
+                    });
+
+                    if (!response.ok) throw new Error('Request failed with status: ' + response.status);
+
+                    document.getElementById('formMsg').textContent = 'Player added successfully!';
+                } catch (err) {
+                    console.log('bad request:', err);
+                    document.getElementById('formMsg').textContent = 'Error adding player.';
+                }
+            }
+
+            // expose submitPlayer to global scope so onclick can find it
+            window.submitPlayer = submitPlayer;
+        }
+
+        // expose addPlayer to global scope so onclick can find it
+        window.addPlayer = addPlayer;
 
         //get players
         async function getPlayers(page) {
@@ -171,6 +269,26 @@ async function enemyToggle() {
         let page = document.getElementById('pageCount');
 
         getEnemies(parseInt(page.textContent));
+
+        sortBy.addEventListener('change', function () {
+            enemyTable.innerHTML = `<th>Enemy Name</th>
+                        <th>Health</th>
+                        <th>Damage</th>
+                        <th>Loot</th>
+                        <th>Spawn Biome</th>`;
+            page.textContent = '0';
+            getEnemies(0);
+        });
+
+        orderBy.addEventListener('change', function () {
+            enemyTable.innerHTML = `<th>Enemy Name</th>
+                        <th>Health</th>
+                        <th>Damage</th>
+                        <th>Loot</th>
+                        <th>Spawn Biome</th>`;
+            page.textContent = '0';
+            getEnemies(0);
+        });
 
         //pagination buttons
         let next = document.getElementById('next');
@@ -299,6 +417,31 @@ async function classesToggle() {
 
         getClasses(parseInt(page.textContent));
 
+        sortBy.addEventListener('change', function () {
+            classTable.innerHTML = `<tr>
+                   <th>Class Name</th>
+                        <th>Armour</th>
+                        <th>Weapon Name</th>
+                        <th>Weapon Damage</th>
+                        <th>Weapon Range</th>
+                </tr>`;
+            page.textContent = '0';
+            getClasses(0);
+        });
+
+        orderBy.addEventListener('change', function () {
+            classTable.innerHTML = `<tr>
+                   <th>Class Name</th>
+                        <th>Armour</th>
+                        <th>Weapon Name</th>
+                        <th>Weapon Damage</th>
+                        <th>Weapon Range</th>
+                </tr>`;
+            page.textContent = '0';
+            getClasses(0);
+        });
+
+
         //pagination buttons
         let next = document.getElementById('next');
         let prev = document.getElementById('prev');
@@ -416,6 +559,15 @@ async function locationToggle() {
 
         getLocation(parseInt(page.textContent));
 
+        orderBy.addEventListener('change', function () {
+            locationTable.innerHTML = `<tr>
+                    <th>Name</th>
+                </tr>
+                    `;
+            page.textContent = '0';
+            getLocation(0);
+        });
+
         //pagination buttons
         let next = document.getElementById('next');
         let prev = document.getElementById('prev');
@@ -501,7 +653,7 @@ async function queriesToggle() {
 
             `
         let query = document.getElementById('queries');
-        
+
         runQuery(query.value);
 
         //get location
@@ -528,7 +680,7 @@ async function queriesToggle() {
                 //for each query response in output
                 output.forEach(q => {
                     let row = document.createElement('tr');
-                   
+
                 });
 
             } catch (err) {
