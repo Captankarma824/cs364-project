@@ -502,14 +502,15 @@ async function queriesToggle() {
                 </select>
 
             `
-
-        runQuery(query);
+        let query = document.getElementById('queries');
+        
+        runQuery(query.value);
 
         //get location
         async function runQuery(query) {
             //make call to backend for location w/ pagination
             try {
-                const params = { page: page, orderBy: orderBy.value };
+                const params = { query: query, page: page, orderBy: orderBy.value };
                 const url = new URL(`http://${window.location.hostname}:7000/query`);
                 url.search = new URLSearchParams(params).toString();
 
