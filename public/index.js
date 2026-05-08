@@ -484,9 +484,11 @@ async function classesToggle() {
             `
                 <h2>Classes</h2>
                 <select id ="sortBy">
-                    <option value ="ClassName">Class Name</option>
+                    <option value ="ClassName">Class Type</option>
                     <option value ="Armour">Armour</option>
                     <option value ="WeaponName">Weapon Name</option>
+                    <option value ="WeaponDam">Weapon Damage</option>
+                    <option value ="WeaponRange">Weapon Range</option>
                 </select>
                 <select id ="orderBy">
                     <option value ="ASC">Ascending</option>
@@ -495,7 +497,7 @@ async function classesToggle() {
 
                 <table id ="classTable">
                     <tr>
-                        <th>Class Name</th>
+                        <th>Class Type</th>
                         <th>Armour</th>
                         <th>Weapon Name</th>
                         <th>Weapon Damage</th>
@@ -516,7 +518,7 @@ async function classesToggle() {
 
         getClasses(parseInt(page.textContent));
 
-        const classHeader = `<tr><th>Class Name</th><th>Armour</th><th>Weapon Name</th><th>Weapon Damage</th><th>Weapon Range</th></tr>`;
+        const classHeader = `<tr><th>Class Type</th><th>Armour</th><th>Weapon Name</th><th>Weapon Damage</th><th>Weapon Range</th></tr>`;
 
         sortBy.addEventListener('change', function () {
             classTable.innerHTML = classHeader;

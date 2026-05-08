@@ -50,7 +50,7 @@ router.get('/class', async (req, res) => {
     let Class = req.query;
 
     // Whitelist valid values to prevent SQL injection
-    const validSortColumns = ['ClassName', 'Armour', 'WeaponName'];
+    const validSortColumns = ['ClassName', 'Armour', 'WeaponName', 'WeaponDam', 'WeaponRange'];
     const validOrders = ['ASC', 'DESC'];
 
     const sortBy = validSortColumns.includes(Class.sort) ? Class.sort : 'ClassName';
