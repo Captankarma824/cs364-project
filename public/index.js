@@ -45,7 +45,7 @@ function runQuery(number, output = null) {
                 <label for="location">Location Name</label>
                 <input type="text" id="location" placeholder="e.g. Underground"><br>
                 <button id="submitButton" onclick="submitQuery(document.getElementById('location').value, 1)">Submit</button>/
-                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                <button id="cancelButton" onclick="queriesToggle(); setTimeout(() => queriesToggle(), 350);">Cancel</button>
                 ${resultHtml}
             `;
             break;
@@ -53,7 +53,7 @@ function runQuery(number, output = null) {
             queryDiv.innerHTML = `
                 <h2>Percentages of class utilization among all players</h2>
                 <button id="submitButton" onclick="submitQuery('', 2)">Submit</button>/
-                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                <button id="cancelButton" onclick="queriesToggle(); setTimeout(() => queriesToggle(), 350);">Cancel</button>
                 ${resultHtml}
             `;
             break;
@@ -68,7 +68,7 @@ function runQuery(number, output = null) {
                     <option value="Summoner">Summoner</option>
                 </select><br>
                 <button id="submitButton" onclick="submitQuery(document.getElementById('className').value, 3)">Submit</button>/
-                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                <button id="cancelButton" onclick="queriesToggle(); setTimeout(() => queriesToggle(), 350);">Cancel</button>
                 ${resultHtml}
             `;
             break;
@@ -76,7 +76,7 @@ function runQuery(number, output = null) {
             queryDiv.innerHTML = `
                 <h2>Find the most utilized weapon for each class</h2>
                 <button id="submitButton" onclick="submitQuery('', 4)">Submit</button>/
-                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                <button id="cancelButton" onclick="queriesToggle(); setTimeout(() => queriesToggle(), 350);">Cancel</button>
                 ${resultHtml}
             `;
             break;
@@ -86,7 +86,7 @@ function runQuery(number, output = null) {
                 <label for="loot">Loot</label>
                 <input type="text" id="loot" placeholder="e.g. Feather"><br>
                 <button id="submitButton" onclick="submitQuery(document.getElementById('loot').value, 5)">Submit</button>/
-                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                <button id="cancelButton" onclick="queriesToggle(); setTimeout(() => queriesToggle(), 350);">Cancel</button>
                 ${resultHtml}
             `;
             break;
@@ -94,7 +94,7 @@ function runQuery(number, output = null) {
             queryDiv.innerHTML = `
                 <h2>Location that has the most enemies</h2>
                 <button id="submitButton" onclick="submitQuery('', 6)">Submit</button>/
-                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                <button id="cancelButton" onclick="queriesToggle(); setTimeout(() => queriesToggle(), 350);">Cancel</button>
                 ${resultHtml}
             `;
             break;
@@ -112,13 +112,14 @@ function buildResultHtml(number, output) {
         ).join('');
         return `<table border="1"><tr>${headerRow}</tr>${rows}</table>`;
     } else if (number === 5) {
-        return `<h3> Average Enemies Needed to Get a ${output[0].Loot} is: ${parseFloat(output[0].AverageEnemiesNeeded)}`
+        return `<h3> Average Amount of ${output[0].EnemyName} Killed Needed to Get a ${output[0].Loot} is: ${parseFloat(output[0].AverageEnemiesNeeded)}</h3>`
+    } else if (number === 1) {
+        return `<h3> Total Health of Enemies in ${output[0].Background} is: ${parseFloat(output[0].TotalHealth)}</h3>`
+    } else if (number === 3) {
+        return `<h3> Average Damage for That Class is: ${parseFloat(output[0].AverageClassDamage)}</h3>`
+    } else if (number === 6) {
+        return `<h3> The Location That has the Most Enemies is: ${output[0].Background} With ${parseFloat(output[0].NumberOfEnemies)}</h3>`
     }
-    // All other cases return a single value
-    const val = Array.isArray(output) ? output[0] : output;
-    if (val === null || val === undefined) return '<p>No results.</p>';
-    const display = typeof val === 'object' ? JSON.stringify(val) : val;
-    return `<h3>${display}</h3>`;
 }
 
 // ── Animation helper ─────────────────────────────────────────────────────────
