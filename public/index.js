@@ -133,12 +133,11 @@ async function playerToggle() {
 
                 <label for="className">Class Name</label>
                 <select id ="className">
-                    <option value ="Range">Range</option>
+                    <option value ="Ranged">Ranged</option>
                     <option value ="Melee">Melee</option>
                     <option value ="Mage">Mage</option>
                     <option value ="Summoner">Summoner</option>
                 </select>
-
                 <br>
 
                 <button id="submitButton" onclick="submitPlayer()">Submit</button>
@@ -654,7 +653,7 @@ async function locationToggle() {
 async function queriesToggle() {
 
     if (!QS) {
-        queryDiv.innerHTML = //add queries
+        queryDiv.innerHTML =
             `
                 <h2>Queries</h2>
                 <select id ="queries">
@@ -669,57 +668,195 @@ async function queriesToggle() {
             `
         let query = document.getElementById('queries');
 
-        runQuery(query.value);
+        query.addEventListener('change', function () {
+            runQuery(parseInt(query.value));
+        });
 
         //get location
         async function runQuery(number) {
             //change html based on number
             switch (number) {
                 case 1:
-                    queryDiv.innerHTML = ``;
+                    queryDiv.innerHTML =
+                        `
+                    <h2>Total sum of health among all enemies that can spawn in a certain location</h2>
+
+                    <label for="location">Location Name</label>
+                    <input type="text" id="location" placeholder="e.g. Underground"><br>
+
+                    <button id="submitButton" onclick="submitQuery(location.value, 1)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                    `;
                     break;
                 case 2:
-                    queryDiv.innerHTML = ``;
+                    queryDiv.innerHTML =
+                        `
+                    <h2>Percentages of class utilization among all players</h2>
+
+                    <button id="submitButton" onclick="submitQuery('', 2)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                    `;
                     break;
                 case 3:
-                    queryDiv.innerHTML = ``;
+                    queryDiv.innerHTML =
+                        `
+                    <h2>Find the average amount of damage for all players with a class</h2>
+
+                    <label for="className">Class Name</label>
+                    <select id ="className">
+                    <option value ="Ranged">Ranged</option>
+                    <option value ="Melee">Melee</option>
+                    <option value ="Mage">Mage</option>
+                    <option value ="Summoner">Summoner</option>
+                    </select>
+                    <br>
+
+                    <button id="submitButton" onclick="submitQuery(className.value, 3)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                    `;
                     break;
                 case 4:
-                    queryDiv.innerHTML = ``;
+                    queryDiv.innerHTML =
+                        `
+                    <h2>Find the most utilized weapon for each class</h2>
+
+                    <button id="submitButton" onclick="submitQuery('', 4)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                    `;
                     break;
                 case 5:
-                    queryDiv.innerHTML = ``;
+                    queryDiv.innerHTML =
+                        `
+                    <h2>Calculate the average amount of enemies needed to kill to get a specific loot drop</h2>
+
+                    <label for="loot">Loot</label>
+                    <input type="text" id="loot" placeholder="e.g. Feather"><br>
+
+                    <button id="submitButton" onclick="submitQuery(loot.value, 5)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                    `;
+                    break;
+                case 6:
+                    queryDiv.innerHTML =
+                        `
+                    <h2>Location that has the most enemies</h2>
+
+                    <button id="submitButton" onclick="submitQuery('', 6)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                    `;
                     break;
             }
 
-            //make call to backend for location w/ pagination
-            try {
-                const params = { number: number, page: page, orderBy: orderBy.value };
-                const url = new URL(`http://${window.location.hostname}:7000/query`);
-                url.search = new URLSearchParams(params).toString();
+            //make call to backend for Query w/ pagination
+            async function submitQuery(data, number) {
+                try {
+                    const params = { data: data, number: number, page: page, orderBy: orderBy.value };
+                    const url = new URL(`http://${window.location.hostname}:7000/query`);
+                    url.search = new URLSearchParams(params).toString();
 
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
 
-                if (!response.ok) {
-                    throw new Error("Request failed with status: 400");
+                    if (!response.ok) {
+                        throw new Error("Request failed with status: 400");
+                    }
+
+                    let output = await response.json();
+                    console.log(output);
+
+                    //change html based on number
+                    switch (number) {
+                        case 1:
+                            queryDiv.innerHTML =
+                                `
+                    <h2>Total sum of health among all enemies that can spawn in a certain location</h2>
+
+                    <label for="location">Location Name</label>
+                    <input type="text" id="location" placeholder="e.g. Underground"><br>
+
+                    <button id="submitButton" onclick="submitQuery(location.value, 1)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+
+                    <h2>${output[0]}</h2>
+                    `;
+                            break;
+                        case 2:
+                            queryDiv.innerHTML =
+                                `
+                    <h2>Percentages of class utilization among all players</h2>
+
+                    <button id="submitButton" onclick="submitQuery('', 2)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+
+                    <h2>${output}</h2>
+                    `;
+                            break;
+                        case 3:
+                            queryDiv.innerHTML =
+                                `
+                    <h2>Find the average amount of damage for all players with a class</h2>
+
+                    <label for="className">Class Name</label>
+                    <select id ="className">
+                    <option value ="Ranged">Ranged</option>
+                    <option value ="Melee">Melee</option>
+                    <option value ="Mage">Mage</option>
+                    <option value ="Summoner">Summoner</option>
+                    </select>
+                    <br>
+
+                    <button id="submitButton" onclick="submitQuery(className.value, 3)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+
+                    <h2>${output[0]}</h2>
+                    `;
+                            break;
+                        case 4:
+                            queryDiv.innerHTML =
+                                `
+                    <h2>Find the most utilized weapon for each class</h2>
+
+                    <button id="submitButton" onclick="submitQuery('', 4)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+
+                    <h2>${output}</h2>
+                    `;
+                            break;
+                        case 5:
+                            queryDiv.innerHTML =
+                                `
+                    <h2>Calculate the average amount of enemies needed to kill to get a specific loot drop</h2>
+
+                    <label for="loot">Loot</label>
+                    <input type="text" id="loot" placeholder="e.g. Feather"><br>
+
+                    <button id="submitButton" onclick="submitQuery(loot.value, 5)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+
+                    <h2>${output[0]}</h2>
+                    `;
+                            break;
+                        case 6:
+                            queryDiv.innerHTML =
+                                `
+                    <h2>Location that has the most enemies</h2>
+
+                    <button id="submitButton" onclick="submitQuery('', 6)">Submit</button>/
+                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+
+                    <h2>${output[0]}</h2>
+                    `;
+                            break;
+                    }
+                } catch (err) {
+                    console.log("bad request:", err);
                 }
-
-                let output = await response.json();
-                console.log(output);
-                //for each query response in output
-                output.forEach(q => {
-                    let row = document.createElement('tr');
-
-                });
-
-            } catch (err) {
-                console.log("bad request:", err);
             }
+
         }
         QS = true;
     } else {
