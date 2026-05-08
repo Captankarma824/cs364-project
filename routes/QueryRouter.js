@@ -25,11 +25,12 @@ router.get('', async (req, res) => {
 
         case '2':
             connection.query(
-                `SELECT PlayerClasses.ClassId, COUNT(PlayerClasses.PlayerId) AS PlayersUsingClass,
+                `SELECT PlayerClasses.ClassName, COUNT(PlayerClasses.PlayerId) AS PlayersUsingClass,
                 (COUNT(PlayerClasses.PlayerId) * 100.0 / (SELECT COUNT(Player.PlayerId) FROM Player)) AS UsagePercentage
-                FROM (SELECT Player.PlayerId, Player.ClassId
-                FROM Player) AS PlayerClasses
-                GROUP BY PlayerClasses.ClassId`,
+                FROM (SELECT Player.PlayerId, Class.ClassName
+                FROM Player JOIN Class ON Player.ClassId = Class.ClassId) AS PlayerClasses
+                GROUP BY PlayerClasses.ClassName;
+                `,
                 (err, results) => {
                     if (err) return res.status(500).json({ error: err.message });
                     return res.status(200).json(results);
