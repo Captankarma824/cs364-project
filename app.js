@@ -33,6 +33,7 @@ app.use(cors({
 
 //routes
 app.use('/find', require('./routes/FindRouter.js'));
+app.use('/query', require('./routes/QueryRouter.js'));
 app.use('/create', require('./routes/CreateRouter.js'));
 
 // catch 404 and forward to error handler
