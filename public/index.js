@@ -650,8 +650,12 @@ async function queriesToggle() {
             `
                 <h2>Queries</h2>
                 <select id ="queries">
-                    <option value ="ASC">Ascending</option>
-                    <option value ="DESC">Descending</option>
+                    <option value ="1">Total sum of health among all enemies that can spawn in a certain location</option>
+                    <option value ="2">Percentages of class utilization among all players</option>
+                    <option value ="3">Find the average amount of damage for all players with a class</option>
+                    <option value ="4">Find the most utilized weapon for each class</option>
+                    <option value ="5">Calculate the average amount of enemies needed to kill to get a specific loot drop</option>
+                    <option value ="6">Location that has the most enemies</option>
                 </select>
 
             `
@@ -660,10 +664,29 @@ async function queriesToggle() {
         runQuery(query.value);
 
         //get location
-        async function runQuery(query) {
+        async function runQuery(number) {
+            //change html based on number
+            switch (number) {
+                case 1:
+                    queryDiv.innerHTML= ``;
+                    break;
+                case 2:
+                    queryDiv.innerHTML= ``;
+                    break;
+                case 3:
+                    queryDiv.innerHTML= ``;
+                    break;
+                case 4:
+                    queryDiv.innerHTML= ``;
+                    break;
+                case 5:
+                    queryDiv.innerHTML= ``;
+                    break;
+            }
+
             //make call to backend for location w/ pagination
             try {
-                const params = { query: query, page: page, orderBy: orderBy.value };
+                const params = { number: number, page: page, orderBy: orderBy.value };
                 const url = new URL(`http://${window.location.hostname}:7000/query`);
                 url.search = new URLSearchParams(params).toString();
 
