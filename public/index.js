@@ -111,6 +111,8 @@ function buildResultHtml(number, output) {
             `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`
         ).join('');
         return `<table border="1"><tr>${headerRow}</tr>${rows}</table>`;
+    }else if(number === 5){
+        return `<h3> Average Enemies Needed to Get a ${output[0].Loot} is: ${parseFloat(output[0].AverageEnemiesNeeded)}`
     }
     // All other cases return a single value
     const val = Array.isArray(output) ? output[0] : output;
