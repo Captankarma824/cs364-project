@@ -37,9 +37,11 @@ async function playerToggle() {
                         <th>Class</th>
                     </tr>
                 </table>
-                <button id ="next">Next</button>
-                <p id = "pageCount">0</p>
+                <div id = "paginationDiv">
                 <button id ="prev">Previous</button> 
+                <p id = "pageCount">0</p>
+                <button id ="next">Next</button>
+                </div>
             `
 
         let sortBy = document.getElementById('sortBy');
@@ -261,9 +263,11 @@ async function enemyToggle() {
                         <th>Spawn Biome</th>
                     </tr>
                 </table>
-                <button id ="next">Next</button>
-                <p id = "pageCount">0</p>
+                <div id = "paginationDiv">
                 <button id ="prev">Previous</button> 
+                <p id = "pageCount">0</p>
+                <button id ="next">Next</button>
+                </div>
             `
 
         let sortBy = document.getElementById('sortBy');
@@ -408,9 +412,11 @@ async function classesToggle() {
                         <th>Weapon Range</th>
                     </tr>
                 </table>
-                <button id ="next">Next</button>
-                <p id = "pageCount">0</p>
+                <div id = "paginationDiv">
                 <button id ="prev">Previous</button> 
+                <p id = "pageCount">0</p>
+                <button id ="next">Next</button>
+                </div>
             `
 
         let sortBy = document.getElementById('sortBy');
@@ -551,9 +557,11 @@ async function locationToggle() {
                         <th>Name</th>
                     </tr>
                 </table>
-                <button id ="next">Next</button>
-                <p id = "pageCount">0</p>
+                <div id = "paginationDiv">
                 <button id ="prev">Previous</button> 
+                <p id = "pageCount">0</p>
+                <button id ="next">Next</button>
+                </div>
             `
 
         let orderBy = document.getElementById('orderBy');
@@ -668,19 +676,19 @@ async function queriesToggle() {
             //change html based on number
             switch (number) {
                 case 1:
-                    queryDiv.innerHTML= ``;
+                    queryDiv.innerHTML = ``;
                     break;
                 case 2:
-                    queryDiv.innerHTML= ``;
+                    queryDiv.innerHTML = ``;
                     break;
                 case 3:
-                    queryDiv.innerHTML= ``;
+                    queryDiv.innerHTML = ``;
                     break;
                 case 4:
-                    queryDiv.innerHTML= ``;
+                    queryDiv.innerHTML = ``;
                     break;
                 case 5:
-                    queryDiv.innerHTML= ``;
+                    queryDiv.innerHTML = ``;
                     break;
             }
 

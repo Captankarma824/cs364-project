@@ -112,16 +112,27 @@ input {
     cursor: pointer;
 }
 
+p{
+    margin: .8rem;
+    font-size: 1.6rem;
+}
+
 /* Buttons */
 button {
     background-color: #4CAF50;
     border: none;
     padding: 8px 12px;
     color: white;
+    margin: 1rem;
     border-radius: 6px;
     cursor: pointer;
 }
 
 button:hover {
     background-color: #45a049;
+}
+
+#paginationDiv{
+    display: flex;
+
 }
