@@ -1,7 +1,5 @@
 
-//show diff form based on what user wants to do
-let submit = document.getElementById('SubmitCommand');
-let command = document.getElementById('SelectCommand');
+// For Toggling
 let playerDiv = document.getElementById('playerDiv');
 let PS = false;
 let enemyDiv = document.getElementById('enemyDiv');
@@ -13,7 +11,7 @@ let CS = false;
 let queryDiv = document.getElementById('queryDiv');
 let QS = false;
 
-//toggle commands
+// Toggle Commands
 async function playerToggle() {
 
     if (!PS) {

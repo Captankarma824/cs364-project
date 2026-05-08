@@ -3,7 +3,7 @@ const router = express.Router();
 const connection = require('../db');
 
 router.get('', async (req, res) => {
-
+    
 });
 
 module.exports = router;
