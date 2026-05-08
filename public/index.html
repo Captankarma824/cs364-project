@@ -6,29 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS364 Final Project</title>
     <link rel="stylesheet" href="index.css">
-    
+
 </head>
 
 <body>
-        <h1 class = "navbar">Terraria DB</h1>
-        <div class = "container"></div>
+    <h1 class="navbar">Terraria DB</h1>
+    <div class="container">
         <div class="sidebar">
-        <a href="#">Players</a>
-        <a href="#">Classes</a>
-        <a href="#">Locations</a>
-        <a href="#">Enemies</a>
-        <a href="#">Queries</a>
-    </div>
-        <div id="commandDiv">
-            <select name="SelectComputer" id="SelectCommand">
-                <option value="Find">Find</option>
-                <option value="Create">Create</option>
-            </select>
+            <a href="#" onclick="playerToggle()">Players</a>
+            <a href="#" onclick="classesToggle();">Classes</a>
+            <a href="#" onclick="locationToggle();">Locations</a>
+            <a href="#" onclick="enemyToggle();">Enemies</a>
+            <a href="#" onclick="queriesToggle();">Queries</a>
         </div>
-
-        <br>
-        <div id="submitDiv">
-            <button type="submit" id="SubmitCommand">Submit Form</button>
+        <div class="main" id="cardContainer">
+            <div class="card" id="playerDiv"></div>
+            <div class="card" id="enemyDiv"></div>
         </div>
     </div>
 
