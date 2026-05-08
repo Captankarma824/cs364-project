@@ -111,7 +111,7 @@ function buildResultHtml(number, output) {
             `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`
         ).join('');
         return `<table border="1"><tr>${headerRow}</tr>${rows}</table>`;
-    }else if(number === 5){
+    } else if (number === 5) {
         return `<h3> Average Enemies Needed to Get a ${output[0].Loot} is: ${parseFloat(output[0].AverageEnemiesNeeded)}`
     }
     // All other cases return a single value
@@ -119,6 +119,24 @@ function buildResultHtml(number, output) {
     if (val === null || val === undefined) return '<p>No results.</p>';
     const display = typeof val === 'object' ? JSON.stringify(val) : val;
     return `<h3>${display}</h3>`;
+}
+
+// ── Animation helper ─────────────────────────────────────────────────────────
+
+function showCard(el) {
+    el.style.display = 'block';
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            el.classList.add('open');
+        });
+    });
+}
+
+function hideCard(el) {
+    el.classList.remove('open');
+    el.addEventListener('transitionend', () => {
+        el.style.display = 'none';
+    }, { once: true });
 }
 
 // ── Toggle Commands ───────────────────────────────────────────────────────────
@@ -325,8 +343,12 @@ async function playerToggle() {
             }
         }
         PS = true;
+        showCard(playerDiv);
     } else {
-        playerDiv.innerHTML = ``;
+        hideCard(playerDiv);
+        playerDiv.addEventListener('transitionend', () => {
+            playerDiv.innerHTML = '';
+        }, { once: true });
         PS = false;
     }
 
@@ -444,8 +466,12 @@ async function enemyToggle() {
             }
         }
         ES = true;
+        showCard(enemyDiv);
     } else {
-        enemyDiv.innerHTML = ``;
+        hideCard(enemyDiv);
+        enemyDiv.addEventListener('transitionend', () => {
+            enemyDiv.innerHTML = '';
+        }, { once: true });
         ES = false;
     }
 
@@ -564,8 +590,12 @@ async function classesToggle() {
             }
         }
         CS = true;
+        showCard(classesDiv);
     } else {
-        classesDiv.innerHTML = ``;
+        hideCard(classesDiv);
+        classesDiv.addEventListener('transitionend', () => {
+            classesDiv.innerHTML = '';
+        }, { once: true });
         CS = false;
     }
 
@@ -651,8 +681,12 @@ async function locationToggle() {
             }
         }
         LS = true;
+        showCard(locationDiv);
     } else {
-        locationDiv.innerHTML = ``;
+        hideCard(locationDiv);
+        locationDiv.addEventListener('transitionend', () => {
+            locationDiv.innerHTML = '';
+        }, { once: true });
         LS = false;
     }
 
@@ -680,8 +714,12 @@ async function queriesToggle() {
         });
 
         QS = true;
+        showCard(queryDiv);
     } else {
-        queryDiv.innerHTML = ``;
+        hideCard(queryDiv);
+        queryDiv.addEventListener('transitionend', () => {
+            queryDiv.innerHTML = '';
+        }, { once: true });
         QS = false;
     }
 

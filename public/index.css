@@ -66,6 +66,15 @@ body {
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.card.open {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Table */
@@ -112,7 +121,7 @@ input {
     cursor: pointer;
 }
 
-p{
+p {
     margin: .8rem;
     font-size: 1.6rem;
 }
@@ -132,7 +141,17 @@ button:hover {
     background-color: #45a049;
 }
 
-#paginationDiv{
+#paginationDiv {
     display: flex;
 
+}
+
+/* animation */
+.dropdown-menu {
+    clip-path: inset(0 0 100% 0 round 12px);
+    transition: clip-path .28s cubic-bezier(.22, 1, .36, 1);
+}
+
+.dropdown-wrap.open .dropdown-menu {
+    clip-path: inset(0 0 0% 0 round 12px);
 }
