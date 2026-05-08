@@ -129,12 +129,15 @@ async function playerToggle() {
                 <label for="weaponRange">Weapon Range</label>
                 <input type="number" id="weaponRange" placeholder="e.g. 1738" min="0"><br>
 
+                <label for="className">Class Name</label>
                 <select id ="className">
                     <option value ="Range">Range</option>
                     <option value ="Melee">Melee</option>
                     <option value ="Mage">Mage</option>
                     <option value ="Summoner">Summoner</option>
                 </select>
+
+                <br>
 
                 <button id="submitButton" onclick="submitPlayer()">Submit</button>
                 <button id="cancelButton" onclick="playerToggle(); playerToggle();">Cancel</button>
@@ -210,7 +213,7 @@ async function playerToggle() {
                     Name.textContent = p.PlayerName;
                     Health.textContent = p.Health;
                     Mana.textContent = p.Mana;
-                    Class.textContent = p.Class;
+                    Class.textContent = p.ClassName;
 
                     row.appendChild(Name);
                     row.appendChild(Health);
