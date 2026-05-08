@@ -1,4 +1,3 @@
-
 // For Toggling
 let playerDiv = document.getElementById('playerDiv');
 let PS = false;
@@ -11,7 +10,117 @@ let CS = false;
 let queryDiv = document.getElementById('queryDiv');
 let QS = false;
 
-// Toggle Commands
+// ── Global query functions ────────────────────────────────────────────────────
+
+async function submitQuery(data, number) {
+    try {
+        const params = { data: data, number: number };
+        const url = new URL(`http://${window.location.hostname}:7000/query`);
+        url.search = new URLSearchParams(params).toString();
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) throw new Error("Request failed with status: 400");
+
+        let output = await response.json();
+        console.log(output);
+
+        runQuery(number, output);
+
+    } catch (err) {
+        console.log("bad request:", err);
+    }
+}
+
+function runQuery(number, output = null) {
+    const resultHtml = output !== null ? buildResultHtml(number, output) : '';
+
+    switch (number) {
+        case 1:
+            queryDiv.innerHTML = `
+                <h2>Total sum of health among all enemies that can spawn in a certain location</h2>
+                <label for="location">Location Name</label>
+                <input type="text" id="location" placeholder="e.g. Underground"><br>
+                <button id="submitButton" onclick="submitQuery(document.getElementById('location').value, 1)">Submit</button>/
+                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                ${resultHtml}
+            `;
+            break;
+        case 2:
+            queryDiv.innerHTML = `
+                <h2>Percentages of class utilization among all players</h2>
+                <button id="submitButton" onclick="submitQuery('', 2)">Submit</button>/
+                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                ${resultHtml}
+            `;
+            break;
+        case 3:
+            queryDiv.innerHTML = `
+                <h2>Find the average amount of damage for all players with a class</h2>
+                <label for="className">Class Name</label>
+                <select id="className">
+                    <option value="Ranged">Ranged</option>
+                    <option value="Melee">Melee</option>
+                    <option value="Mage">Mage</option>
+                    <option value="Summoner">Summoner</option>
+                </select><br>
+                <button id="submitButton" onclick="submitQuery(document.getElementById('className').value, 3)">Submit</button>/
+                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                ${resultHtml}
+            `;
+            break;
+        case 4:
+            queryDiv.innerHTML = `
+                <h2>Find the most utilized weapon for each class</h2>
+                <button id="submitButton" onclick="submitQuery('', 4)">Submit</button>/
+                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                ${resultHtml}
+            `;
+            break;
+        case 5:
+            queryDiv.innerHTML = `
+                <h2>Calculate the average amount of enemies needed to kill to get a specific loot drop</h2>
+                <label for="loot">Loot</label>
+                <input type="text" id="loot" placeholder="e.g. Feather"><br>
+                <button id="submitButton" onclick="submitQuery(document.getElementById('loot').value, 5)">Submit</button>/
+                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                ${resultHtml}
+            `;
+            break;
+        case 6:
+            queryDiv.innerHTML = `
+                <h2>Location that has the most enemies</h2>
+                <button id="submitButton" onclick="submitQuery('', 6)">Submit</button>/
+                <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
+                ${resultHtml}
+            `;
+            break;
+    }
+}
+
+function buildResultHtml(number, output) {
+    // Cases 2 and 4 return arrays of objects then build table
+    if (number === 2 || number === 4) {
+        if (!Array.isArray(output) || output.length === 0) return '<p>No results.</p>';
+        const headers = Object.keys(output[0]);
+        const headerRow = headers.map(h => `<th>${h}</th>`).join('');
+        const rows = output.map(row =>
+            `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`
+        ).join('');
+        return `<table border="1"><tr>${headerRow}</tr>${rows}</table>`;
+    }
+    // All other cases return a single value
+    const val = Array.isArray(output) ? output[0] : output;
+    if (val === null || val === undefined) return '<p>No results.</p>';
+    const display = typeof val === 'object' ? JSON.stringify(val) : val;
+    return `<h3>${display}</h3>`;
+}
+
+// ── Toggle Commands ───────────────────────────────────────────────────────────
+
 async function playerToggle() {
 
     if (!PS) {
@@ -78,19 +187,17 @@ async function playerToggle() {
         let prev = document.getElementById('prev');
 
         next.addEventListener('click', function () {
-            //go to next page
             playerTable.innerHTML =
                 `<tr>
                     <th>Name</th>
                     <th>Health</th>
                     <th>Mana</th>
                     <th>Class</th>
-                </tr>`;;
+                </tr>`;
             getPlayers(parseInt(page.textContent) + 1);
-            page.textContent = page.textContent = '' + (parseInt(page.textContent) + 1);
+            page.textContent = '' + (parseInt(page.textContent) + 1);
         });
         prev.addEventListener('click', function () {
-            //go to prev page if not 0
             if (parseInt(page.textContent) > 0) {
                 playerTable.innerHTML =
                     `<tr>
@@ -100,12 +207,11 @@ async function playerToggle() {
                     <th>Class</th>
                 </tr>`;
                 getPlayers(parseInt(page.textContent) - 1);
-                page.textContent = page.textContent = '' + (parseInt(page.textContent) - 1);
+                page.textContent = '' + (parseInt(page.textContent) - 1);
             }
         });
 
-        //add player
-        async function addPlayer() {
+        window.addPlayer = async function addPlayer() {
             playerDiv.innerHTML =
                 `
                 <h2>Add Player</h2>
@@ -133,6 +239,7 @@ async function playerToggle() {
 
                 <label for="className">Class Name</label>
                 <select id ="className">
+                    <option value ="0" disabled selected>-- Select a Class --</option>
                     <option value ="Ranged">Ranged</option>
                     <option value ="Melee">Melee</option>
                     <option value ="Mage">Mage</option>
@@ -145,8 +252,7 @@ async function playerToggle() {
                 <p id="formMsg"></p>
             `;
 
-            async function submitPlayer() {
-
+            window.submitPlayer = async function submitPlayer() {
                 const body = {
                     Mana: parseInt(document.getElementById('mana').value) || 0,
                     Health: parseInt(document.getElementById('health').value) || 0,
@@ -173,18 +279,10 @@ async function playerToggle() {
                     console.log('bad request:', err);
                     document.getElementById('formMsg').textContent = 'Error adding player.';
                 }
-            }
+            };
+        };
 
-            // expose submitPlayer to global scope so onclick can find it
-            window.submitPlayer = submitPlayer;
-        }
-
-        // expose addPlayer to global scope so onclick can find it
-        window.addPlayer = addPlayer;
-
-        //get players
         async function getPlayers(page) {
-            //make call to backend for player w/ pagination
             try {
                 const params = { page: page, sort: sortBy.value, orderBy: orderBy.value };
                 const url = new URL(`http://${window.location.hostname}:7000/find/player`);
@@ -192,18 +290,14 @@ async function playerToggle() {
 
                 const response = await fetch(url, {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                 });
 
-                if (!response.ok) {
-                    throw new Error("Request failed with status: 400");
-                }
+                if (!response.ok) throw new Error("Request failed with status: 400");
 
                 let output = await response.json();
                 console.log(output);
-                //for each player in output
+
                 output.forEach(p => {
                     let row = document.createElement('tr');
                     let Name = document.createElement('td');
@@ -277,61 +371,34 @@ async function enemyToggle() {
         getEnemies(parseInt(page.textContent));
 
         sortBy.addEventListener('change', function () {
-            enemyTable.innerHTML = `<th>Enemy Name</th>
-                        <th>Health</th>
-                        <th>Damage</th>
-                        <th>Loot</th>
-                        <th>Spawn Biome</th>`;
+            enemyTable.innerHTML = `<tr><th>Enemy Name</th><th>Health</th><th>Damage</th><th>Loot</th><th>Spawn Biome</th></tr>`;
             page.textContent = '0';
             getEnemies(0);
         });
 
         orderBy.addEventListener('change', function () {
-            enemyTable.innerHTML = `<th>Enemy Name</th>
-                        <th>Health</th>
-                        <th>Damage</th>
-                        <th>Loot</th>
-                        <th>Spawn Biome</th>`;
+            enemyTable.innerHTML = `<tr><th>Enemy Name</th><th>Health</th><th>Damage</th><th>Loot</th><th>Spawn Biome</th></tr>`;
             page.textContent = '0';
             getEnemies(0);
         });
 
-        //pagination buttons
         let next = document.getElementById('next');
         let prev = document.getElementById('prev');
 
         next.addEventListener('click', function () {
-            //go to next page
-            enemyTable.innerHTML =
-                `<tr>
-                    <th>Enemy Name</th>
-                        <th>Health</th>
-                        <th>Damage</th>
-                        <th>Loot</th>
-                        <th>Spawn Biome</th>
-                </tr>`;
+            enemyTable.innerHTML = `<tr><th>Enemy Name</th><th>Health</th><th>Damage</th><th>Loot</th><th>Spawn Biome</th></tr>`;
             getEnemies(parseInt(page.textContent) + 1);
-            page.textContent = page.textContent = '' + (parseInt(page.textContent) + 1);
+            page.textContent = '' + (parseInt(page.textContent) + 1);
         });
         prev.addEventListener('click', function () {
-            //go to prev page if not 0
             if (parseInt(page.textContent) > 0) {
-                enemyTable.innerHTML =
-                    `<tr>
-                    <th>Enemy Name</th>
-                        <th>Health</th>
-                        <th>Damage</th>
-                        <th>Loot</th>
-                        <th>Spawn Biome</th>
-                </tr>`;
+                enemyTable.innerHTML = `<tr><th>Enemy Name</th><th>Health</th><th>Damage</th><th>Loot</th><th>Spawn Biome</th></tr>`;
                 getEnemies(parseInt(page.textContent) - 1);
-                page.textContent = page.textContent = '' + (parseInt(page.textContent) - 1);
+                page.textContent = '' + (parseInt(page.textContent) - 1);
             }
         });
 
-        //get Enemies
         async function getEnemies(page) {
-            //make call to backend for enemies w/ pagination
             try {
                 const params = { page: page, sort: sortBy.value, orderBy: orderBy.value };
                 const url = new URL(`http://${window.location.hostname}:7000/find/enemy`);
@@ -339,18 +406,14 @@ async function enemyToggle() {
 
                 const response = await fetch(url, {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                 });
 
-                if (!response.ok) {
-                    throw new Error("Request failed with status: 400");
-                }
+                if (!response.ok) throw new Error("Request failed with status: 400");
 
                 let output = await response.json();
                 console.log(output);
-                //for each enemy in output
+
                 output.forEach(e => {
                     let row = document.createElement('tr');
                     let Name = document.createElement('td');
@@ -425,67 +488,37 @@ async function classesToggle() {
 
         getClasses(parseInt(page.textContent));
 
+        const classHeader = `<tr><th>Class Name</th><th>Armour</th><th>Weapon Name</th><th>Weapon Damage</th><th>Weapon Range</th></tr>`;
+
         sortBy.addEventListener('change', function () {
-            classTable.innerHTML = `<tr>
-                   <th>Class Name</th>
-                        <th>Armour</th>
-                        <th>Weapon Name</th>
-                        <th>Weapon Damage</th>
-                        <th>Weapon Range</th>
-                </tr>`;
+            classTable.innerHTML = classHeader;
             page.textContent = '0';
             getClasses(0);
         });
 
         orderBy.addEventListener('change', function () {
-            classTable.innerHTML = `<tr>
-                   <th>Class Name</th>
-                        <th>Armour</th>
-                        <th>Weapon Name</th>
-                        <th>Weapon Damage</th>
-                        <th>Weapon Range</th>
-                </tr>`;
+            classTable.innerHTML = classHeader;
             page.textContent = '0';
             getClasses(0);
         });
 
-
-        //pagination buttons
         let next = document.getElementById('next');
         let prev = document.getElementById('prev');
 
         next.addEventListener('click', function () {
-            //go to next page
-            classTable.innerHTML =
-                `<tr>
-                   <th>Class Name</th>
-                        <th>Armour</th>
-                        <th>Weapon Name</th>
-                        <th>Weapon Damage</th>
-                        <th>Weapon Range</th>
-                </tr>`;
+            classTable.innerHTML = classHeader;
             getClasses(parseInt(page.textContent) + 1);
-            page.textContent = page.textContent = '' + (parseInt(page.textContent) + 1);
+            page.textContent = '' + (parseInt(page.textContent) + 1);
         });
         prev.addEventListener('click', function () {
-            //go to prev page if not 0
             if (parseInt(page.textContent) > 0) {
-                classTable.innerHTML =
-                    `<tr>
-                    <th>Class Name</th>
-                        <th>Armour</th>
-                        <th>Weapon Name</th>
-                        <th>Weapon Damage</th>
-                        <th>Weapon Range</th>
-                </tr>`;
+                classTable.innerHTML = classHeader;
                 getClasses(parseInt(page.textContent) - 1);
-                page.textContent = page.textContent = '' + (parseInt(page.textContent) - 1);
+                page.textContent = '' + (parseInt(page.textContent) - 1);
             }
         });
 
-        //get Classes
         async function getClasses(page) {
-            //make call to backend for classes w/ pagination
             try {
                 const params = { page: page, sort: sortBy.value, orderBy: orderBy.value };
                 const url = new URL(`http://${window.location.hostname}:7000/find/class`);
@@ -493,18 +526,14 @@ async function classesToggle() {
 
                 const response = await fetch(url, {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                 });
 
-                if (!response.ok) {
-                    throw new Error("Request failed with status: 400");
-                }
+                if (!response.ok) throw new Error("Request failed with status: 400");
 
                 let output = await response.json();
                 console.log(output);
-                //for each class in output
+
                 output.forEach(c => {
                     let row = document.createElement('tr');
                     let CName = document.createElement('td');
@@ -570,44 +599,28 @@ async function locationToggle() {
         getLocation(parseInt(page.textContent));
 
         orderBy.addEventListener('change', function () {
-            locationTable.innerHTML = `<tr>
-                    <th>Name</th>
-                </tr>
-                    `;
+            locationTable.innerHTML = `<tr><th>Name</th></tr>`;
             page.textContent = '0';
             getLocation(0);
         });
 
-        //pagination buttons
         let next = document.getElementById('next');
         let prev = document.getElementById('prev');
 
         next.addEventListener('click', function () {
-            //go to next page
-            locationTable.innerHTML =
-                `<tr>
-                    <th>Name</th>
-                </tr>
-                    `;
+            locationTable.innerHTML = `<tr><th>Name</th></tr>`;
             getLocation(parseInt(page.textContent) + 1);
-            page.textContent = page.textContent = '' + (parseInt(page.textContent) + 1);
+            page.textContent = '' + (parseInt(page.textContent) + 1);
         });
         prev.addEventListener('click', function () {
-            //go to prev page if not 0
             if (parseInt(page.textContent) > 0) {
-                locationTable.innerHTML =
-                    `<tr>
-                        <th>Name</th>
-                    </tr>
-                    `;
+                locationTable.innerHTML = `<tr><th>Name</th></tr>`;
                 getLocation(parseInt(page.textContent) - 1);
-                page.textContent = page.textContent = '' + (parseInt(page.textContent) - 1);
+                page.textContent = '' + (parseInt(page.textContent) - 1);
             }
         });
 
-        //get location
         async function getLocation(page) {
-            //make call to backend for location w/ pagination
             try {
                 const params = { page: page, orderBy: orderBy.value };
                 const url = new URL(`http://${window.location.hostname}:7000/find/location`);
@@ -615,26 +628,19 @@ async function locationToggle() {
 
                 const response = await fetch(url, {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                 });
 
-                if (!response.ok) {
-                    throw new Error("Request failed with status: 400");
-                }
+                if (!response.ok) throw new Error("Request failed with status: 400");
 
                 let output = await response.json();
                 console.log(output);
-                //for each location in output
+
                 output.forEach(l => {
                     let row = document.createElement('tr');
                     let Name = document.createElement('td');
-
                     Name.textContent = l.Background;
-
                     row.appendChild(Name);
-
                     locationTable.appendChild(row);
                 });
 
@@ -657,6 +663,7 @@ async function queriesToggle() {
             `
                 <h2>Queries</h2>
                 <select id ="queries">
+                    <option value ="0" disabled selected>-- Select a query --</option>
                     <option value ="1">Total sum of health among all enemies that can spawn in a certain location</option>
                     <option value ="2">Percentages of class utilization among all players</option>
                     <option value ="3">Find the average amount of damage for all players with a class</option>
@@ -664,200 +671,12 @@ async function queriesToggle() {
                     <option value ="5">Calculate the average amount of enemies needed to kill to get a specific loot drop</option>
                     <option value ="6">Location that has the most enemies</option>
                 </select>
+            `;
 
-            `
-        let query = document.getElementById('queries');
-
-        query.addEventListener('change', function () {
-            runQuery(parseInt(query.value));
+        document.getElementById('queries').addEventListener('change', function () {
+            runQuery(parseInt(this.value));
         });
 
-        //get location
-        async function runQuery(number) {
-            //change html based on number
-            switch (number) {
-                case 1:
-                    queryDiv.innerHTML =
-                        `
-                    <h2>Total sum of health among all enemies that can spawn in a certain location</h2>
-
-                    <label for="location">Location Name</label>
-                    <input type="text" id="location" placeholder="e.g. Underground"><br>
-
-                    <button id="submitButton" onclick="submitQuery(location.value, 1)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-                    `;
-                    break;
-                case 2:
-                    queryDiv.innerHTML =
-                        `
-                    <h2>Percentages of class utilization among all players</h2>
-
-                    <button id="submitButton" onclick="submitQuery('', 2)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-                    `;
-                    break;
-                case 3:
-                    queryDiv.innerHTML =
-                        `
-                    <h2>Find the average amount of damage for all players with a class</h2>
-
-                    <label for="className">Class Name</label>
-                    <select id ="className">
-                    <option value ="Ranged">Ranged</option>
-                    <option value ="Melee">Melee</option>
-                    <option value ="Mage">Mage</option>
-                    <option value ="Summoner">Summoner</option>
-                    </select>
-                    <br>
-
-                    <button id="submitButton" onclick="submitQuery(className.value, 3)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-                    `;
-                    break;
-                case 4:
-                    queryDiv.innerHTML =
-                        `
-                    <h2>Find the most utilized weapon for each class</h2>
-
-                    <button id="submitButton" onclick="submitQuery('', 4)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-                    `;
-                    break;
-                case 5:
-                    queryDiv.innerHTML =
-                        `
-                    <h2>Calculate the average amount of enemies needed to kill to get a specific loot drop</h2>
-
-                    <label for="loot">Loot</label>
-                    <input type="text" id="loot" placeholder="e.g. Feather"><br>
-
-                    <button id="submitButton" onclick="submitQuery(loot.value, 5)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-                    `;
-                    break;
-                case 6:
-                    queryDiv.innerHTML =
-                        `
-                    <h2>Location that has the most enemies</h2>
-
-                    <button id="submitButton" onclick="submitQuery('', 6)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-                    `;
-                    break;
-            }
-
-            //make call to backend for Query w/ pagination
-            async function submitQuery(data, number) {
-                try {
-                    const params = { data: data, number: number, page: page, orderBy: orderBy.value };
-                    const url = new URL(`http://${window.location.hostname}:7000/query`);
-                    url.search = new URLSearchParams(params).toString();
-
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-
-                    if (!response.ok) {
-                        throw new Error("Request failed with status: 400");
-                    }
-
-                    let output = await response.json();
-                    console.log(output);
-
-                    //change html based on number
-                    switch (number) {
-                        case 1:
-                            queryDiv.innerHTML =
-                                `
-                    <h2>Total sum of health among all enemies that can spawn in a certain location</h2>
-
-                    <label for="location">Location Name</label>
-                    <input type="text" id="location" placeholder="e.g. Underground"><br>
-
-                    <button id="submitButton" onclick="submitQuery(location.value, 1)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-
-                    <h2>${output[0]}</h2>
-                    `;
-                            break;
-                        case 2:
-                            queryDiv.innerHTML =
-                                `
-                    <h2>Percentages of class utilization among all players</h2>
-
-                    <button id="submitButton" onclick="submitQuery('', 2)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-
-                    <h2>${output}</h2>
-                    `;
-                            break;
-                        case 3:
-                            queryDiv.innerHTML =
-                                `
-                    <h2>Find the average amount of damage for all players with a class</h2>
-
-                    <label for="className">Class Name</label>
-                    <select id ="className">
-                    <option value ="Ranged">Ranged</option>
-                    <option value ="Melee">Melee</option>
-                    <option value ="Mage">Mage</option>
-                    <option value ="Summoner">Summoner</option>
-                    </select>
-                    <br>
-
-                    <button id="submitButton" onclick="submitQuery(className.value, 3)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-
-                    <h2>${output[0]}</h2>
-                    `;
-                            break;
-                        case 4:
-                            queryDiv.innerHTML =
-                                `
-                    <h2>Find the most utilized weapon for each class</h2>
-
-                    <button id="submitButton" onclick="submitQuery('', 4)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-
-                    <h2>${output}</h2>
-                    `;
-                            break;
-                        case 5:
-                            queryDiv.innerHTML =
-                                `
-                    <h2>Calculate the average amount of enemies needed to kill to get a specific loot drop</h2>
-
-                    <label for="loot">Loot</label>
-                    <input type="text" id="loot" placeholder="e.g. Feather"><br>
-
-                    <button id="submitButton" onclick="submitQuery(loot.value, 5)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-
-                    <h2>${output[0]}</h2>
-                    `;
-                            break;
-                        case 6:
-                            queryDiv.innerHTML =
-                                `
-                    <h2>Location that has the most enemies</h2>
-
-                    <button id="submitButton" onclick="submitQuery('', 6)">Submit</button>/
-                    <button id="cancelButton" onclick="queriesToggle(); queriesToggle();">Cancel</button>
-
-                    <h2>${output[0]}</h2>
-                    `;
-                            break;
-                    }
-                } catch (err) {
-                    console.log("bad request:", err);
-                }
-            }
-
-        }
         QS = true;
     } else {
         queryDiv.innerHTML = ``;
